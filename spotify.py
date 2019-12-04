@@ -21,7 +21,7 @@ clientid_secret = spotify_info.secret_key
 redirecturi = spotify_info.redirect_uri
 
 #get the username from terminal!
-username = 'miriam_akkary@yahoo.com'
+username = 'edwinmui@umich.edu'
 scope = 'user-library-read'
 try: 
     token = util.prompt_for_user_token(username, scope,client_id=clientid, client_secret= clientid_secret, redirect_uri= redirecturi)
