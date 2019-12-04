@@ -43,8 +43,15 @@ for url in list_of_urls:
         genres.append(genre)
         #print(genre) 
 
-print(genres)
-print('\n')
+#print(genres)
+#print('\n')
+#print(top_20_song_names)
+
+genres_names_list = tuple(zip(top_20_song_names, genres))
+print(genres_names_list)
+
+
+
 
     
 
