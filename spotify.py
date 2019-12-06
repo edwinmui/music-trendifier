@@ -1,27 +1,29 @@
-import spotify_info
-import requests
-import json
-import sqlite3
-import webbrowser
-
-import urllib.request, urllib.parse, urllib.error
-import sys
-import os
 import spotipy 
+import spotify_info
 import spotipy.util as util
 import matplotlib
 import matplotlib.pyplot as plt 
 
+import sys
+import os
+import requests
+import json
+import sqlite3
+import webbrowser
+import urllib.request, urllib.parse, urllib.error
+
+
+
 #HOW TO RUN: 
 #run the code, and you will get redirected to google. enter the google URL into terminal and click enter
-#after you do that, run the code again and you will be all set!
+#after you do that, run the code again and you will be all set
 
 clientid = spotify_info.consumer_key
 clientid_secret = spotify_info.secret_key
 redirecturi = spotify_info.redirect_uri
 
-#get the username from terminal!
-username = 'edwinmui@umich.edu'
+#get the username from terminal
+username = '1294124325'
 scope = 'user-library-read'
 try: 
     token = util.prompt_for_user_token(username, scope,client_id=clientid, client_secret= clientid_secret, redirect_uri= redirecturi)
@@ -47,7 +49,7 @@ playlist_list = []
 playlist_name_list = []
 playlist_id_name = {}
 # playlist_list is a list of the playlist IDs --> prints [3423sdf, 34230ow, 234234k]
-# playlist_name_list is a list of the actual playlist names --> prints ['Party!', 'SI 206', 'miriam']
+# playlist_name_list is a list of the actual playlist names --> prints ['Party!', 'SI 206', 'edwin']
 # playlist_id_name is a dictionary where the keys are the ID name and the values are the playlist name
 for x in results['items']:
     playlist_name = x["id"]
@@ -96,13 +98,13 @@ except:
     filename = open('spotify.json', 'w')
     filename.write(json.dumps(playlist_result_dict))
 
-# CREATING A DATABASE!
+# CREATING A DATABASE
 conn = sqlite3.connect('SIProject.sqlite')
 cur = conn.cursor()
 
 cur.execute('DROP TABLE IF EXISTS Spotify')
 cur.execute('CREATE TABLE Spotify (playlist_name TEXT, playlist_id TEXT, song TEXT, artist TEXT)') 
-#inserts the dictionary into the table! 
+#inserts the dictionary into the table
 for (key, val) in songs_in_playlist.items(): 
     for song in val: 
         cur.execute('INSERT INTO Spotify (playlist_name,playlist_id, song, artist) VALUES (?,?,?,?)', (playlist_id_name[key],key, song[0], song[1]))
