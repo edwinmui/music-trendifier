@@ -2,6 +2,7 @@ import billboard
 import wikipedia
 import requests
 from bs4 import BeautifulSoup
+import sqlite3
 
 
 chart = billboard.ChartData('hot-100', date='2008-12-31')
