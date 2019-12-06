@@ -70,16 +70,23 @@ for playlist in playlist_ids_and_names.items():
         # creates a spotify object with id
         playlist_object = spotify_object.user_playlist(username, playlist_id=playlist[0])
 
-        # gets all individuals songs
+        # gets all individuals songs and artists
         songs_and_artists = []
+        # list of song
+        song_list = []
+        # list of artists
+        artist_list = []
+
         # loops through all tracks and adds information to lists
         for track in playlist_object["tracks"]["items"]:
             # helps insert key, value pairs into songs and artists dictionary
-            song_list = []
-            artist_list = []
+            temp_song_list = []
+            temp_artist_list = []
 
             # gets song name
             song_name = track["track"]["name"]
+            temp_song_list.append(song_name)
+            # appends to actual song list
             song_list.append(song_name)
 
             # gets all artist information
@@ -87,10 +94,12 @@ for playlist in playlist_ids_and_names.items():
             # finds the actual artist
             for artist in artist_name:
                 actual_artist_name = artist["name"]
+                temp_artist_list.append(actual_artist_name)
+                # appends to actual artist list
                 artist_list.append(actual_artist_name)
 
             # adds both song and artist in tuple form to the list songs_and_artists
-            songs_and_artists.append((song_list[0], artist_list[0]))
+            songs_and_artists.append((temp_song_list[0], temp_artist_list[0]))
 
 # print(songs_and_artists)                  DELETE THIS LATER!!
 
@@ -127,15 +136,17 @@ print(genres)
     
 
 # connect to database
-conn = sqlite3.connect('SIProject.sqlite')
+conn = sqlite3.connect('track_db.sqlite')
 cur = conn.cursor()
 
-cur.execute('DROP TABLE IF EXISTS Spotify')
-cur.execute('CREATE TABLE Spotify (playlist_name TEXT, playlist_id TEXT, song TEXT, artist TEXT)') 
-#inserts the dictionary into the table
-for (key, val) in songs_in_playlist.items(): 
-    for song in val: 
-        cur.execute('INSERT INTO Spotify (playlist_name,playlist_id, song, artist) VALUES (?,?,?,?)', (playlist_id_name[key],key, song[0], song[1]))
+track_id = 0
+# creates artists table
+cur.execute('DROP TABLE IF EXISTS spotifyArtists')
+cur.execute('CREATE TABLE spotifyArtists (track_id TEXT, artists TEXT)') 
+#inserts artists into the table
+for artist in artist_list:
+    cur.execute('INSERT INTO spotifyArtists (track_id, artists) VALUES ({}, "{}")'.format(track_id, artist))
+    track_id += 0
 conn.commit()
 conn.close()
 
