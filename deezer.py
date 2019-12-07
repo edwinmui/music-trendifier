@@ -53,26 +53,28 @@ for url in list_of_urls:
 
 
 id = 0
+
+
 for (title, artist, genre) in zip(top_tracks, top_artists, genres):
     try:
-        sqliteConnection = sqlite3.connect('deezer.sqlite')
+        sqliteConnection = sqlite3.connect('track_db.sqlite')
         cursor = sqliteConnection.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS deezerTracks (
-                        id integer PRIMARY KEY,
+                        Trackid integer PRIMARY KEY,
                         name text NOT NULL)''')
         cursor.execute('''CREATE TABLE IF NOT EXISTS deezerArtists (
-                        id integer PRIMARY KEY,
+                        Artistid integer PRIMARY KEY,
                         name text NOT NULL)''')
         cursor.execute('''CREATE TABLE IF NOT EXISTS deezerGenres (
-                        id integer PRIMARY KEY,
+                        Genreid integer PRIMARY KEY,
                         name text NOT NULL)''')
         print("Successfully Connected to SQLite")
         title.replace("'", '\'')
         artist.replace("'", '\'')
         genre.replace("'", '\'')
-        sqlite_insert_query1 = """INSERT INTO `deezerTracks` (id, name) VALUES ({},"{}")""".format(id, title)
-        sqlite_insert_query2 = """INSERT INTO `deezerArtists` (id, name) VALUES ({},"{}")""".format(id, artist)
-        sqlite_insert_query3 = """INSERT INTO `deezerGenres` (id, name) VALUES ({},"{}")""".format(id, genre)
+        sqlite_insert_query1 = """INSERT INTO `deezerTracks` (Trackid, name) VALUES ({},"{}")""".format(id, title)
+        sqlite_insert_query2 = """INSERT INTO `deezerArtists` (Artistid, name) VALUES ({},"{}")""".format(id, artist)
+        sqlite_insert_query3 = """INSERT INTO `deezerGenres` (Genreid, name) VALUES ({},"{}")""".format(id, genre)
 
         count1 = cursor.execute(sqlite_insert_query1)
         count2 = cursor.execute(sqlite_insert_query2)
@@ -113,6 +115,8 @@ fig = go.Figure(data=[go.Pie(labels=genre_list,
                              values=genre_values)])
 fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=10,
                   marker=dict(line=dict(color='#000000', width=2)))
+
+fig.update_layout(title_text="Deezer 2017")
 fig.show()
 
 
