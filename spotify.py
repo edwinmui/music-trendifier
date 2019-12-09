@@ -47,11 +47,11 @@ user = spotify_object.current_user()
 #gets current users playlists
 results = spotify_object.current_user_playlists()
 
-# a list of the playlist IDs --> prints [3423sdf, 34230ow, 234234k]
+# a list of the playlist IDs --> e.g. [3423sdf, 34230ow, 234234k]
 playlist_list_ids = []
-# a list of the actual playlist names --> prints ['Party!', 'SI 206', 'edwin']
+# a list of the actual playlist names --> e.g. ['Party!', 'SI 206', 'edwin']
 playlist_names = []
-# a dictionary where the keys are the ID name and the values are the playlist name
+# a dictionary where the keys are the ID name and the values are the playlist name --> e.g. ["414345", 'Top 50 Hits of 2013"]
 playlist_ids_and_names = {}
 
 for item in results['items']:
@@ -101,19 +101,21 @@ for playlist in playlist_ids_and_names.items():
             # adds both song and artist in tuple form to the list songs_and_artists
             songs_and_artists.append((temp_song_list[0], temp_artist_list[0]))
 
-# print(songs_and_artists)                  DELETE THIS LATER!!
 
 # searches up songs and artists to identify genres
 list_of_urls = []
 # songs_and_artists is a list of track tuples containing the song and artist
 for track in songs_and_artists:
-    search = "{} {}".format(track[0],track[1])
-    search_results = wikipedia.search(search, results = 2)
-    searched = wikipedia.page(search_results[0])
+    # creates a serach query with the song and artist
+    search_query = "{} {} {}".format(track[0],track[1],"song")
+    
+    # searches wikipedia with the above query and returns url
+    search_results = wikipedia.search(search_query, results = 2)
+    searched = wikipedia.page(title=search_results[0], pageid=None, redirect=True, preload=False)
     list_of_urls.append(searched.url)
 
 # gets all genres
-genres = []
+genre_list = []
 # iterates through urls to find genre within page of text
 for url in list_of_urls:
     soup = BeautifulSoup(requests.get(url).text, "html.parser")
@@ -122,17 +124,17 @@ for url in list_of_urls:
     if list_of_genres1 != None:
         if list_of_genres1.find("a") != None:
             genre = list_of_genres1.find("a")
-            genres.append(genre.text)
+            genre_list.append(genre.text)
         else:
             list_of_genres2 = list_of_genres1.find("div", {"class": "hlist hlist-separated"})
             li = list_of_genres1.find("ul")
             genre = li.find("a")
-            genres.append(genre.text)
+            genre_list.append(genre.text)
     else:
         genre = "unknown"
-        genres.append(genre)
+        genre_list.append(genre)
 
-print(genres)
+#print(genre_list)
     
 
 # connect to database
@@ -142,11 +144,30 @@ cur = conn.cursor()
 track_id = 0
 # creates artists table
 cur.execute('DROP TABLE IF EXISTS spotifyArtists')
-cur.execute('CREATE TABLE spotifyArtists (track_id TEXT, artists TEXT)') 
+cur.execute('CREATE TABLE spotifyArtists (track_id INTEGER PRIMARY KEY, artists TEXT NOT NULL)') 
 #inserts artists into the table
 for artist in artist_list:
     cur.execute('INSERT INTO spotifyArtists (track_id, artists) VALUES ({}, "{}")'.format(track_id, artist))
     track_id += 0
+
+track_id = 0
+# creates songs table
+cur.execute('DROP TABLE IF EXISTS spotifyTracks')
+cur.execute('CREATE TABLE spotifyTracks (track_id TEXT INTEGER PRIMARY KEY, songs TEXT NOT NULL)') 
+#inserts songs into the table
+for song in song_list:
+    cur.execute('INSERT INTO spotifyTracks (track_id, songs) VALUES ({}, "{}")'.format(track_id, song))
+    track_id += 0
+
+track_id = 0
+# creates genres table
+cur.execute('DROP TABLE IF EXISTS spotifyGenres')
+cur.execute('CREATE TABLE spotifyGenres (track_id TEXT INTEGER PRIMARY KEY, genres TEXT NOT NULL)') 
+#inserts genres into the table
+for genre in genre_list:
+    cur.execute('INSERT INTO spotifyGenres (track_id, genres) VALUES ({}, "{}")'.format(track_id, genre))
+    track_id += 0
+
 conn.commit()
 conn.close()
 
