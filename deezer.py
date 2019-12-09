@@ -59,13 +59,13 @@ for (title, artist, genre) in zip(top_tracks, top_artists, genres):
     try:
         sqliteConnection = sqlite3.connect('track_db.sqlite')
         cursor = sqliteConnection.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS deezerTracks (
+        cursor.execute('''CREATE TABLE IF NOT EXISTS deezerTracks(
                         Trackid integer PRIMARY KEY,
                         name text NOT NULL)''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS deezerArtists (
+        cursor.execute('''CREATE TABLE IF NOT EXISTS deezerArtists(
                         Artistid integer PRIMARY KEY,
                         name text NOT NULL)''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS deezerGenres (
+        cursor.execute('''CREATE TABLE IF NOT EXISTS deezerGenres(
                         Genreid integer PRIMARY KEY,
                         name text NOT NULL)''')
         print("Successfully Connected to SQLite")
@@ -109,7 +109,7 @@ for key in genreDict.keys():
 for value in genreDict.values():
     genre_values.append(value)
 
-print(genre_list, genre_values)
+
 
 fig = go.Figure(data=[go.Pie(labels=genre_list,
                              values=genre_values)])
@@ -117,7 +117,7 @@ fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=10,
                   marker=dict(line=dict(color='#000000', width=2)))
 
 fig.update_layout(title_text="Deezer 2017")
-fig.show()
+#fig.show()
 
 
 
