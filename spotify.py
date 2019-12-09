@@ -1,8 +1,7 @@
 import spotipy 
 import spotify_info
 import spotipy.util as util
-import matplotlib
-import matplotlib.pyplot as plt 
+import plotly.graph_objects as go
 import wikipedia
 from bs4 import BeautifulSoup
 
@@ -144,35 +143,59 @@ cur = conn.cursor()
 track_id = 0
 # creates artists table
 cur.execute('DROP TABLE IF EXISTS spotifyArtists')
-cur.execute('CREATE TABLE spotifyArtists (track_id INTEGER PRIMARY KEY, artists TEXT NOT NULL)') 
+cur.execute('CREATE TABLE spotifyArtists (track_id INTEGER, artists TEXT)') 
 #inserts artists into the table
 for artist in artist_list:
-    cur.execute('INSERT INTO spotifyArtists (track_id, artists) VALUES ({}, "{}")'.format(track_id, artist))
-    track_id += 0
+    cur.execute('INSERT INTO spotifyArtists (track_id, artists) VALUES (?, ?)', (track_id, artist))
+    track_id += 1
 
 track_id = 0
 # creates songs table
 cur.execute('DROP TABLE IF EXISTS spotifyTracks')
-cur.execute('CREATE TABLE spotifyTracks (track_id TEXT INTEGER PRIMARY KEY, songs TEXT NOT NULL)') 
+cur.execute('CREATE TABLE spotifyTracks (track_id INTEGER, tracks TEXT)') 
 #inserts songs into the table
-for song in song_list:
-    cur.execute('INSERT INTO spotifyTracks (track_id, songs) VALUES ({}, "{}")'.format(track_id, song))
-    track_id += 0
+for track in song_list:
+    cur.execute('INSERT INTO spotifyTracks (track_id, tracks) VALUES (?,?)',(track_id, track))
+    track_id += 1
 
 track_id = 0
 # creates genres table
 cur.execute('DROP TABLE IF EXISTS spotifyGenres')
-cur.execute('CREATE TABLE spotifyGenres (track_id TEXT INTEGER PRIMARY KEY, genres TEXT NOT NULL)') 
+cur.execute('CREATE TABLE spotifyGenres (track_id INTEGER, genres TEXT)') 
 #inserts genres into the table
 for genre in genre_list:
-    cur.execute('INSERT INTO spotifyGenres (track_id, genres) VALUES ({}, "{}")'.format(track_id, genre))
-    track_id += 0
+    cur.execute('INSERT INTO spotifyGenres (track_id, genres) VALUES (?,?)',(track_id, genre))
+    track_id += 1
 
 conn.commit()
 conn.close()
 
+'''
+
+# calculates genre frequency and inserts it into dictionary
+genreDict = {}
+for genre in genre_list:
+    genreDict[genre] = genreDict.get(genre, 0) + 1
+
+# creates two lists; one with genre names, the other with the frequency at which the genres appear
+genre_names = []
+genre_frequency = []
+for key in genreDict.keys():
+    genre_names.append(key) 
+for value in genreDict.values():
+    genre_frequency.append(value)
+
+# creates bar graph with genres and their frequency
+fig = go.Figure(data=[go.Pie(labels=genre_names,
+                             values=genre_frequency)])
+fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=10,
+                  marker=dict(line=dict(color='#000000', width=2)))
+
+fig.update_layout(title_text="Spotify 2013")
+fig.show()
 
 
+'''
 
 
 
