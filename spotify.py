@@ -133,7 +133,7 @@ for url in list_of_urls:
         genre = "unknown"
         genre_list.append(genre)
 
-#print(genre_list)
+print(genre_list)
     
 
 # connect to database
@@ -155,7 +155,7 @@ cur.execute('DROP TABLE IF EXISTS spotifyTracks')
 cur.execute('CREATE TABLE spotifyTracks (track_id INTEGER, tracks TEXT)') 
 #inserts songs into the table
 for track in song_list:
-    cur.execute('INSERT INTO spotifyTracks (track_id, tracks) VALUES (?,?)',(track_id, track))
+    cur.execute('INSERT INTO spotifyTracks (track_id, tracks) VALUES (?,?)', (track_id, track))
     track_id += 1
 
 track_id = 0
@@ -164,13 +164,12 @@ cur.execute('DROP TABLE IF EXISTS spotifyGenres')
 cur.execute('CREATE TABLE spotifyGenres (track_id INTEGER, genres TEXT)') 
 #inserts genres into the table
 for genre in genre_list:
-    cur.execute('INSERT INTO spotifyGenres (track_id, genres) VALUES (?,?)',(track_id, genre))
+    cur.execute('INSERT INTO spotifyGenres (track_id, genres) VALUES (?,?)', (track_id, genre))
     track_id += 1
 
 conn.commit()
 conn.close()
 
-'''
 
 # calculates genre frequency and inserts it into dictionary
 genreDict = {}
@@ -195,7 +194,6 @@ fig.update_layout(title_text="Spotify 2013")
 fig.show()
 
 
-'''
 
 
 
