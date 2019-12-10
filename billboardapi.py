@@ -45,26 +45,39 @@ for url in list_of_urls:
         #print(genre) 
 
 id=0
+finish = 0
 for (title, artist, genre) in zip(top_50_song_names, top_50_song_artists, genres):
+    if finish == 20:
+        break
     try:
         sqliteConnection = sqlite3.connect('track_db.sqlite')
         cursor = sqliteConnection.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS billboardTracks(Trackid integer PRIMARY KEY, name text NOT NULL)''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS billboardArtists(Artistid integer PRIMARY KEY, name text NOT NULL)''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS billboardGenres(Genreid integer PRIMARY KEY, name text NOT NULL)''')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS billboardTracks(
+                        id integer PRIMARY KEY, 
+                        Trackid integer ALTERNATE KEY, 
+                        name text NOT NULL)''')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS billboardArtists(
+                        id integer PRIMARY KEY,
+                        Artistid integer ALTERNATE KEY, 
+                        name text NOT NULL)''')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS billboardGenres(
+                        id integer PRIMARY KEY, 
+                        Genreid integer ALTERNATE KEY, 
+                        name text NOT NULL)''')
         print("Successfully Connected to SQLite")
         title.replace("'", '\'')
         artist.replace("'", '\'')
         genre.replace("'", '\'')
-        sqlite_insert_query1 = """INSERT INTO 'billboardTracks'(Trackid, name) VALUES ({},"{}")""".format(id, title)
-        sqlite_insert_query2 = """INSERT INTO 'billboardArtists'(Artistid, name) VALUES ({},"{}")""".format(id, artist)
-        sqlite_insert_query3 = """INSERT INTO 'billboardGenres'(Genreid, name) VALUES ({},"{}")""".format(id, genre)
+        sqlite_insert_query1 = """INSERT INTO 'billboardTracks'(id, Trackid, name) VALUES ({},{},"{}")""".format(id, id, title)
+        sqlite_insert_query2 = """INSERT INTO 'billboardArtists'(id, Artistid, name) VALUES ({},{},"{}")""".format(id, id, artist)
+        sqlite_insert_query3 = """INSERT INTO 'billboardGenres'(id, Genreid, name) VALUES ({},{},"{}")""".format(id, id, genre)
 
         count1 = cursor.execute(sqlite_insert_query1)
         count2 = cursor.execute(sqlite_insert_query2)
         count3 = cursor.execute(sqlite_insert_query3)
         sqliteConnection.commit()
         print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+        finish += 1
         cursor.close()
         
 
@@ -75,6 +88,7 @@ for (title, artist, genre) in zip(top_50_song_names, top_50_song_artists, genres
             sqliteConnection.close()
             print("The SQLite connection is closed")
     id += 1
+
 
 genreDict ={}
 for genre in genres:
