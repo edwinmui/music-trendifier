@@ -106,7 +106,7 @@ for key in genreDict.keys():
 for value in genreDict.values():
     genre_values.append(value)
 
-print(genre_list, genre_values)
+#print(genre_list, genre_values)
 
 fig = go.Figure(data=[go.Pie(labels=genre_list,
                              values=genre_values)])
