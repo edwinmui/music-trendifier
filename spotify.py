@@ -1,3 +1,5 @@
+# By: Edwin Mui, Noah Helber, Jen McMullem
+
 import spotipy 
 import spotify_info
 import spotipy.util as util
@@ -40,8 +42,6 @@ spotify_object = spotipy.Spotify(auth=token)
 
 # gets content from the current spotify user
 user = spotify_object.current_user()
-
-
 
 #gets current users playlists
 results = spotify_object.current_user_playlists()
@@ -133,76 +133,94 @@ for url in list_of_urls:
         genre = "unknown"
         genre_list.append(genre)
 
-print(genre_list)
-    
+
+### INSERTS ARTISTS INTO SQL ###
+
+# the id of each artist
+track_id = 0
+# counter that determines whether 20 items have been inserted
+finish = 0
 
 # connect to database
 conn = sqlite3.connect('track_db.sqlite')
 cur = conn.cursor()
-
-
-# INSERTS ARTISTS INTO SQL #
-
-# the id of each song, artist, and genre
-track_id = 0
-# counter that determines whether 20 items have been inserted
-finish = 0
 # creates artists table
-cur.execute('DROP TABLE IF EXISTS spotifyArtists')
-cur.execute('CREATE TABLE spotifyArtists (track_id INTEGER, artists TEXT)') 
+cur.execute('CREATE TABLE IF NOT EXISTS spotifyArtists (track_id INTEGER PRIMARY KEY, artists TEXT)') 
+conn.close()
 #inserts artists into the table
 for artist in artist_list:
     if finish == 20:
         break
     try:
+        conn = sqlite3.connect('track_db.sqlite')
+        cur = conn.cursor()
         cur.execute('INSERT INTO spotifyArtists (track_id, artists) VALUES (?, ?)', (track_id, artist))
         track_id += 1
-        finish +=1
+        finish += 1
+        conn.commit()
+        conn.close()
     except sqlite3.Error as error:
         print("Failed to insert data into sqlite table", error)
+        track_id += 1
 
-# INSERTS TRACKS INTO SQL #
+### INSERTS TRACKS INTO SQL ###
 
-# the id of each song, artist, and genre
+# the id of each track
 track_id = 0
 # counter that determines whether 20 items have been inserted
 finish = 0
-# creates songs table
-cur.execute('DROP TABLE IF EXISTS spotifyTracks')
-cur.execute('CREATE TABLE spotifyTracks (track_id INTEGER, tracks TEXT)') 
+
+# connect to database
+conn = sqlite3.connect('track_db.sqlite')
+cur = conn.cursor()
+# creates tracks table
+cur.execute('CREATE TABLE IF NOT EXISTS spotifyTracks (track_id INTEGER PRIMARY KEY, tracks TEXT)')
+conn.close() 
 #inserts songs into the table
 for track in song_list:
     if finish == 20:
         break
     try:
+        conn = sqlite3.connect('track_db.sqlite')
+        cur = conn.cursor()
         cur.execute('INSERT INTO spotifyTracks (track_id, tracks) VALUES (?,?)', (track_id, track))
         track_id += 1
         finish += 1
+        conn.commit()
+        conn.close()
     except sqlite3.Error as error:
         print("Failed to insert data into sqlite table", error)
+        track_id += 1
 
+### INSERTS GENRES INTO SQL ###
 
-# INSERTS GENRES INTO SQL #
-
+# the id of each genre
 track_id = 0
 # counter that determines whether 20 items have been inserted
 finish = 0
+
+# connect to database
+conn = sqlite3.connect('track_db.sqlite')
+cur = conn.cursor()
 # creates genres table
-cur.execute('DROP TABLE IF EXISTS spotifyGenres')
-cur.execute('CREATE TABLE spotifyGenres (track_id INTEGER, genres TEXT)') 
+cur.execute('CREATE TABLE IF NOT EXISTS spotifyGenres (track_id INTEGER PRIMARY KEY, genres TEXT)') 
+conn.close()
+
 #inserts genres into the table
 for genre in genre_list:
     if finish == 20:
         break
     try:
+        conn = sqlite3.connect('track_db.sqlite')
+        cur = conn.cursor()
         cur.execute('INSERT INTO spotifyGenres (track_id, genres) VALUES (?,?)', (track_id, genre))
         track_id += 1
         finish += 1
+        conn.commit()
+        conn.close()
     except sqlite3.Error as error:
         print("Failed to insert data into sqlite table", error)
-
-conn.commit()
-conn.close()
+        track_id += 1
 
 
 # calculates genre frequency and inserts it into dictionary
