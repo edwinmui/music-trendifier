@@ -55,22 +55,22 @@ for (title, artist, genre) in zip(top_50_song_names, top_50_song_artists, genres
         cursor.execute('''CREATE TABLE IF NOT EXISTS billboardTracks(
                         id integer PRIMARY KEY, 
                         Trackid integer ALTERNATE KEY, 
-                        name text NOT NULL)''')
+                        Trackname text NOT NULL)''')
         cursor.execute('''CREATE TABLE IF NOT EXISTS billboardArtists(
                         id integer PRIMARY KEY,
                         Artistid integer ALTERNATE KEY, 
-                        name text NOT NULL)''')
+                        Artistname text NOT NULL)''')
         cursor.execute('''CREATE TABLE IF NOT EXISTS billboardGenres(
                         id integer PRIMARY KEY, 
                         Genreid integer ALTERNATE KEY, 
-                        name text NOT NULL)''')
+                        Genrename text NOT NULL)''')
         print("Successfully Connected to SQLite")
         title.replace("'", '\'')
         artist.replace("'", '\'')
         genre.replace("'", '\'')
-        sqlite_insert_query1 = """INSERT INTO 'billboardTracks'(id, Trackid, name) VALUES ({},{},"{}")""".format(id, id, title)
-        sqlite_insert_query2 = """INSERT INTO 'billboardArtists'(id, Artistid, name) VALUES ({},{},"{}")""".format(id, id, artist)
-        sqlite_insert_query3 = """INSERT INTO 'billboardGenres'(id, Genreid, name) VALUES ({},{},"{}")""".format(id, id, genre)
+        sqlite_insert_query1 = """INSERT INTO 'billboardTracks'(id, Trackid, Trackname) VALUES ({},{},"{}")""".format(id, id, title)
+        sqlite_insert_query2 = """INSERT INTO 'billboardArtists'(id, Artistid, Artistname) VALUES ({},{},"{}")""".format(id, id, artist)
+        sqlite_insert_query3 = """INSERT INTO 'billboardGenres'(id, Genreid, Genrename) VALUES ({},{},"{}")""".format(id, id, genre)
 
         count1 = cursor.execute(sqlite_insert_query1)
         count2 = cursor.execute(sqlite_insert_query2)
