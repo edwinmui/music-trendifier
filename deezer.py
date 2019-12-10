@@ -53,34 +53,40 @@ for url in list_of_urls:
 
 
 id = 0
-
+finish = 0
 
 for (title, artist, genre) in zip(top_tracks, top_artists, genres):
+    if finish == 20:
+        break
     try:
         sqliteConnection = sqlite3.connect('track_db.sqlite')
         cursor = sqliteConnection.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS deezerTracks (
-                        Trackid integer PRIMARY KEY,
+        cursor.execute('''CREATE TABLE IF NOT EXISTS deezerTracks(
+                        id integer PRIMARY KEY,
+                        Trackid integer ALTERNATE KEY,
                         name text NOT NULL)''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS deezerArtists (
-                        Artistid integer PRIMARY KEY,
+        cursor.execute('''CREATE TABLE IF NOT EXISTS deezerArtists(
+                        id integer PRIMARY KEY,
+                        Artistid integer ALTERNATE KEY,
                         name text NOT NULL)''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS deezerGenres (
-                        Genreid integer PRIMARY KEY,
+        cursor.execute('''CREATE TABLE IF NOT EXISTS deezerGenres(
+                        id integer PRIMARY KEY,
+                        Genreid integer ALTERNATE KEY,
                         name text NOT NULL)''')
         print("Successfully Connected to SQLite")
         title.replace("'", '\'')
         artist.replace("'", '\'')
         genre.replace("'", '\'')
-        sqlite_insert_query1 = """INSERT INTO `deezerTracks` (Trackid, name) VALUES ({},"{}")""".format(id, title)
-        sqlite_insert_query2 = """INSERT INTO `deezerArtists` (Artistid, name) VALUES ({},"{}")""".format(id, artist)
-        sqlite_insert_query3 = """INSERT INTO `deezerGenres` (Genreid, name) VALUES ({},"{}")""".format(id, genre)
+        sqlite_insert_query1 = """INSERT INTO `deezerTracks` (id, Trackid, name) VALUES ({}, {},"{}")""".format(id, id, title)
+        sqlite_insert_query2 = """INSERT INTO `deezerArtists` (id, Artistid, name) VALUES ({}, {},"{}")""".format(id, id, artist)
+        sqlite_insert_query3 = """INSERT INTO `deezerGenres` (id, Genreid, name) VALUES ({}, {},"{}")""".format(id, id, genre)
 
         count1 = cursor.execute(sqlite_insert_query1)
         count2 = cursor.execute(sqlite_insert_query2)
         count3 = cursor.execute(sqlite_insert_query3)
         sqliteConnection.commit()
         print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+        finish += 1
         cursor.close()
         
 
@@ -109,7 +115,7 @@ for key in genreDict.keys():
 for value in genreDict.values():
     genre_values.append(value)
 
-print(genre_list, genre_values)
+
 
 fig = go.Figure(data=[go.Pie(labels=genre_list,
                              values=genre_values)])
@@ -117,7 +123,7 @@ fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=10,
                   marker=dict(line=dict(color='#000000', width=2)))
 
 fig.update_layout(title_text="Deezer 2017")
-fig.show()
+#fig.show()
 
 
 

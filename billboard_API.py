@@ -44,43 +44,52 @@ for url in list_of_urls:
         genres.append(genre)
         #print(genre) 
 
-id=0
-for (title, artist, genre) in zip(top_50_song_names, top_50_song_artists, genres):
-    try:
-        sqliteConnection = sqlite3.connect('track_db.sqlite')
-        cursor = sqliteConnection.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS billboardTracks (
-                        id integer PRIMARY KEY,
-                        name text NOT NULL)''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS billboardArtists (
-                        id integer PRIMARY KEY,
-                        name text NOT NULL)''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS billboardGenres (
-                        id integer PRIMARY KEY,
-                        name text NOT NULL)''')
-        print("Successfully Connected to SQLite")
-        title.replace("'", '\'')
-        artist.replace("'", '\'')
-        genre.replace("'", '\'')
-        sqlite_insert_query1 = """INSERT INTO `billboardTracks` (id, name) VALUES ({},"{}")""".format(id, title)
-        sqlite_insert_query2 = """INSERT INTO `billboardArtists` (id, name) VALUES ({},"{}")""".format(id, artist)
-        sqlite_insert_query3 = """INSERT INTO `billboardGenres` (id, name) VALUES ({},"{}")""".format(id, genre)
 
-        count1 = cursor.execute(sqlite_insert_query1)
-        count2 = cursor.execute(sqlite_insert_query2)
-        count3 = cursor.execute(sqlite_insert_query3)
-        sqliteConnection.commit()
-        print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
-        cursor.close()
-        
+#connect to database
+conn = sqlite3.connect('track_db.sqlite')
+cur = conn.cursor()
 
-    except sqlite3.Error as error:
-        print("Failed to insert data into sqlite table", error)
-    finally:
-         if (sqliteConnection):
-            sqliteConnection.close()
-            print("The SQLite connection is closed")
-    id += 1
+track_id = 0
+#create titles table
+cur.execute('DROP TABLE IF EXISTS billboardTracks')
+cur.execute('CREATE TABLE billboardTracks (track_id INTEGER, tracks TEXT)')
+#insert tracks into the table
+for track in top_50_song_names:
+    cur.execute('INSERT INTO billboardTracks (track_id, tracks) VALUES (?, ?)', (track_id, track))
+    track_id += 1
+
+track_id = 0
+# creates artists table
+cur.execute('DROP TABLE IF EXISTS billboardArtists')
+cur.execute('CREATE TABLE billboardArtists (track_id INTEGER, artists TEXT)') 
+#inserts artists into the table
+for artist in top_50_song_artists:
+    cur.execute('INSERT INTO billboardArtists (track_id, artists) VALUES (?,?)', (track_id, artist))
+    track_id += 1
+
+track_id = 0
+# creates genres table
+cur.execute('DROP TABLE IF EXISTS billboardGenres')
+cur.execute('CREATE TABLE billboardGenres (track_id INTEGER, genres TEXT)') 
+#inserts genres into the table
+for genre in genres:
+    cur.execute('INSERT INTO billboardGenres (track_id, genres) VALUES (?,?)', (track_id, genre))
+    track_id += 1
+
+conn.commit()
+conn.close()
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 
