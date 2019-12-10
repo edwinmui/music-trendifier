@@ -18,10 +18,12 @@ response = requests.request("GET", url, headers=headers)
 
 top_tracks = []
 top_artists = []
+duration_times = []
 r = json.loads(response.text)
 tracks = r['tracks']
 for song in tracks['data'][0:50]:
     top_tracks.append(song['title'])
+    duration_times.append(song['duration'])
     top_artists.append(song['artist']['name'])
 list_of_urls = []
 for (x,y) in zip(top_tracks,top_artists):
@@ -54,8 +56,7 @@ for url in list_of_urls:
 
 id = 0
 finish = 0
-
-for (title, artist, genre) in zip(top_tracks, top_artists, genres):
+for (title, artist, duration, genre) in zip(top_tracks, top_artists, duration_times, genres):
     if finish == 20:
         break
     try:
@@ -64,22 +65,23 @@ for (title, artist, genre) in zip(top_tracks, top_artists, genres):
         cursor.execute('''CREATE TABLE IF NOT EXISTS deezerTracks(
                         id integer PRIMARY KEY,
                         Trackid integer ALTERNATE KEY,
-                        name text NOT NULL)''')
+                        duration integer,
+                        Trackname text NOT NULL)''')
         cursor.execute('''CREATE TABLE IF NOT EXISTS deezerArtists(
                         id integer PRIMARY KEY,
                         Artistid integer ALTERNATE KEY,
-                        name text NOT NULL)''')
+                        Artistname text NOT NULL)''')
         cursor.execute('''CREATE TABLE IF NOT EXISTS deezerGenres(
                         id integer PRIMARY KEY,
                         Genreid integer ALTERNATE KEY,
-                        name text NOT NULL)''')
+                        Genrename text NOT NULL)''')
         print("Successfully Connected to SQLite")
         title.replace("'", '\'')
         artist.replace("'", '\'')
         genre.replace("'", '\'')
-        sqlite_insert_query1 = """INSERT INTO `deezerTracks` (id, Trackid, name) VALUES ({}, {},"{}")""".format(id, id, title)
-        sqlite_insert_query2 = """INSERT INTO `deezerArtists` (id, Artistid, name) VALUES ({}, {},"{}")""".format(id, id, artist)
-        sqlite_insert_query3 = """INSERT INTO `deezerGenres` (id, Genreid, name) VALUES ({}, {},"{}")""".format(id, id, genre)
+        sqlite_insert_query1 = """INSERT INTO `deezerTracks` (id, Trackid, duration, Trackname) VALUES ({}, {},{},"{}")""".format(id, id, duration, title)
+        sqlite_insert_query2 = """INSERT INTO `deezerArtists` (id, Artistid, Artistname) VALUES ({}, {},"{}")""".format(id, id, artist)
+        sqlite_insert_query3 = """INSERT INTO `deezerGenres` (id, Genreid, Genrename) VALUES ({}, {},"{}")""".format(id, id, genre)
 
         count1 = cursor.execute(sqlite_insert_query1)
         count2 = cursor.execute(sqlite_insert_query2)
@@ -96,7 +98,20 @@ for (title, artist, genre) in zip(top_tracks, top_artists, genres):
          if (sqliteConnection):
             sqliteConnection.close()
             print("The SQLite connection is closed")
+
     id += 1
+    if id == 50:
+        sqliteConnection = sqlite3.connect('track_db.sqlite')
+        cursor = sqliteConnection.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS myResults AS SELECT Trackname, Artistname
+                        FROM  deezerTracks JOIN  deezerArtists
+                        ON Trackid = Artistid
+                        WHERE deezerTracks.id = deezerArtists.id''')
+        sqliteConnection.commit()
+        cursor.close()
+        sqliteConnection.close()
+
+
 
 
 genreDict ={}
@@ -124,22 +139,6 @@ fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=10,
 
 fig.update_layout(title_text="Deezer 2017")
 #fig.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+exit()
 
 
