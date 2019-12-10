@@ -140,32 +140,66 @@ print(genre_list)
 conn = sqlite3.connect('track_db.sqlite')
 cur = conn.cursor()
 
+
+# INSERTS ARTISTS INTO SQL #
+
+# the id of each song, artist, and genre
 track_id = 0
+# counter that determines whether 20 items have been inserted
+finish = 0
 # creates artists table
 cur.execute('DROP TABLE IF EXISTS spotifyArtists')
 cur.execute('CREATE TABLE spotifyArtists (track_id INTEGER, artists TEXT)') 
 #inserts artists into the table
 for artist in artist_list:
-    cur.execute('INSERT INTO spotifyArtists (track_id, artists) VALUES (?, ?)', (track_id, artist))
-    track_id += 1
+    if finish == 20:
+        break
+    try:
+        cur.execute('INSERT INTO spotifyArtists (track_id, artists) VALUES (?, ?)', (track_id, artist))
+        track_id += 1
+        finish +=1
+    except sqlite3.Error as error:
+        print("Failed to insert data into sqlite table", error)
 
+# INSERTS TRACKS INTO SQL #
+
+# the id of each song, artist, and genre
 track_id = 0
+# counter that determines whether 20 items have been inserted
+finish = 0
 # creates songs table
 cur.execute('DROP TABLE IF EXISTS spotifyTracks')
 cur.execute('CREATE TABLE spotifyTracks (track_id INTEGER, tracks TEXT)') 
 #inserts songs into the table
 for track in song_list:
-    cur.execute('INSERT INTO spotifyTracks (track_id, tracks) VALUES (?,?)', (track_id, track))
-    track_id += 1
+    if finish == 20:
+        break
+    try:
+        cur.execute('INSERT INTO spotifyTracks (track_id, tracks) VALUES (?,?)', (track_id, track))
+        track_id += 1
+        finish += 1
+    except sqlite3.Error as error:
+        print("Failed to insert data into sqlite table", error)
+
+
+# INSERTS GENRES INTO SQL #
 
 track_id = 0
+# counter that determines whether 20 items have been inserted
+finish = 0
 # creates genres table
 cur.execute('DROP TABLE IF EXISTS spotifyGenres')
 cur.execute('CREATE TABLE spotifyGenres (track_id INTEGER, genres TEXT)') 
 #inserts genres into the table
 for genre in genre_list:
-    cur.execute('INSERT INTO spotifyGenres (track_id, genres) VALUES (?,?)', (track_id, genre))
-    track_id += 1
+    if finish == 20:
+        break
+    try:
+        cur.execute('INSERT INTO spotifyGenres (track_id, genres) VALUES (?,?)', (track_id, genre))
+        track_id += 1
+        finish += 1
+    except sqlite3.Error as error:
+        print("Failed to insert data into sqlite table", error)
 
 conn.commit()
 conn.close()
