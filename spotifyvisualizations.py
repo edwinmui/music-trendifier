@@ -69,35 +69,50 @@ layout5 = go.Layout(
 fig = go.Figure(data=[go.Box(y=disco_name_lengths,
     boxpoints = 'all',
     jitter = 0.3,
-    pointpos = -1.8
+    pointpos = -1.8,
+    marker_color='rgb(7,40,89)',
+    line_color='rgb(7,40,89)',
+    name="Disco"
     )], layout = layout)
 
 # plots folk name lengths
 fig2 = go.Figure(data=[go.Box(y=folk_name_lengths,
     boxpoints = 'all',
     jitter = 0.3,
-    pointpos = -1.8
+    pointpos = -1.8,
+    marker_color='rgb(7,40,89)',
+    line_color='rgb(7,40,89)',
+    name="Folk"
     )], layout = layout2)
 
 # plots pop name lengths
 fig3 = go.Figure(data=[go.Box(y=pop_name_lengths,
     boxpoints = 'all',
     jitter = 0.3,
-    pointpos = -1.8
+    pointpos = -1.8,
+    marker_color='rgb(7,40,89)',
+    line_color='rgb(7,40,89)',
+    name="Pop"
     )], layout = layout3)
 
 # hip hop name lengths
 fig4 = go.Figure(data=[go.Box(y=hip_hop_name_lengths,
     boxpoints = 'all',
     jitter = 0.3,
-    pointpos = -1.8
+    pointpos = -1.8,
+    marker_color='rgb(7,40,89)',
+    line_color='rgb(7,40,89)',
+    name="Hip Hop"
     )], layout = layout4)
 
 # electronic name lengths
 fig5 = go.Figure(data=[go.Box(y=electronic_name_lengths,
     boxpoints = 'all',
     jitter = 0.3,
-    pointpos = -1.8
+    pointpos = -1.8,
+    marker_color='rgb(7,40,89)',
+    line_color='rgb(7,40,89)',
+    name="Electronic"
     )], layout = layout5)
 
 fig.show()
