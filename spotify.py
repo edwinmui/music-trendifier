@@ -4,6 +4,8 @@ import spotipy
 import spotify_info
 import spotipy.util as util
 import plotly.graph_objects as go
+import pandas as pd
+import matplotlib.pyplot as plt
 import wikipedia
 from bs4 import BeautifulSoup
 
