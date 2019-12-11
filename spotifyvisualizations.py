@@ -107,37 +107,4 @@ fig4.show()
 fig5.show()
 
 
-'''
-for track in track_data:
-    # gets the word length
-    word_lenth = 0
-    for letter in track[1]:
-        word_length +=1
-    track_genre_and_word_length.append()
-'''
-
-
 conn.close()
-
-'''
-# gets all the track names from database, 
-cur.execute("SELECT tracks FROM trackByGenre")
-
-track_data = cur.fetchall()
-# counts the number of letters, and insert into a list
-track_lengths_data = []
-for track in track_data:
-    word_length = 0
-    for word in track:
-        for letter in word:
-            word_length +=1
-    track_lengths_data.append(int(word_length))
-
-# gets all the corresponding genre names from datase and inserts into a list
-cur.execute("SELECT genres FROM trackByGenre")
-data = cur.fetchall()
-genre_data = [genre[0] for genre in data]
-
-print(genre_data)
-print(track_lengths_data)
-'''
